@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:state_checked="true"
+        android:color="@color/blue"
+        android:id="@+id/bottom_nav_message"
+        android:icon="@drawable/ic_message"
+        android:title="@string/bottom_nav_message" />
+
+    <item
+        android:id="@+id/bottom_nav_friends"
+        android:icon="@drawable/nav_friends"
+        android:title="@string/bottom_nav_friends" />
+
+    <item
+        android:id="@+id/bottom_nav_notification"
+        android:icon="@drawable/ic_notification"
+        android:title="@string/bottom_nav_notification" />
+
+    <item
+        android:id="@+id/bottom_nav_me"
+        android:icon="@drawable/ic_me"
+        android:title="@string/bottom_nav_me" />
+
+
+</menu>

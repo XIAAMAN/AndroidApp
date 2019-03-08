@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidApp</string>
+    <string name="userAccount">账号</string>
+    <string name="userPassword">密码</string>
+    <string name="accountHint">请输入手机号码</string>
+    <string name="passwordHint">请输入密码</string>
+    <string name="setPasswordHint">请设置密码</string>
+    <string name="userLogin">登录</string>
+    <string name="userSignUp">注册账号</string>
+    <string name="forgetPassword">忘记密码?</string>
+    <string name="accountOrPasswordError">账号或密码错误</string>
+    <string name="realName">真实姓名</string>
+    <string name="phoneNumber">手机号码</string>
+    <string name="sendCheckMessage">获取验证码</string>
+    <string name="sendMessageDone">已发送</string>
+    <string name="signUp">注册</string>
+    <string name="email">邮箱</string>
+    <string name="realNameHint">2-6个中文</string>
+    <string name="emailHint">请输入邮箱</string>
+    <string name="validPhone">请输入有效的手机号码</string>
+    <string name="reSendCode">重新获取</string>
+    <string name="signUpInvalidInfo">注册信息不符合要求，请按要求正确填写信息</string>
+    <string name="signUpSuccess">注册成功</string>
+    <string name="signUpFailedTitle">注册失败</string>
+    <string name="signUpFailed">请确保验证码正确有效，手机号未被注册,若已经注册，可通过忘记密码找回</string>
+    <string name="resetPassword">重置密码</string>
+    <string name="resetPasswordSure">确定</string>
+    <string name="resetPasswordFailedHint">请按要求正确填写信息</string>
+    <string name="resetPasswordError">请确保验证码正确有效，手机号是否未注册</string>
+    <string name="resetPasswordFailed">修改密码失败</string>
+    <string name="resetPasswordSuccess">修改密码成功</string>
+
+    <!--mainactivity-->
+    <string name="bottom_nav_message">消息</string>
+    <string name="bottom_nav_friends">好友</string>
+    <string name="bottom_nav_notification">通知</string>
+    <string name="bottom_nav_me">我的</string>
+    <string name="add_friends">加好友</string>
+    <string name="find_friend_by_phone">手机号查找</string>
+    <string name="search_friend_btn">搜索</string>
+    <string name="search_no_friend_result">未找到任何结果</string>
+    <string name="search_friend_name">姓名：</string>
+    <string name="search_friend_sex">性别：</string>
+    <string name="search_friend_phone">手机号：</string>
+    <string name="search_friend_email">邮箱：</string>
+    <string name="add_search_friend">添加好友</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="searchFriendInputPhoneError">请输入正确的手机号码</string>
+    <string name="addFriendHint">已成功发送好友申请</string>
+    <string name="addFriendFailedHint">请求失败</string>
+
+    <string name="acceptRequest">同意</string>
+    <string name="acceptedRequest">已同意</string>
+    <string name="requestTypeIsFriend">请求加为好友</string>
+
+</resources>
