@@ -23,9 +23,9 @@ import com.example.Fragment.MeFragment;
 import com.example.Fragment.MessageFragment;
 import com.example.Fragment.NotificationFragment;
 import com.example.activity.FindAndAddFriendActivity;
-import com.example.db.FriendRequestList;
 import com.example.helper.BottomNavigationViewHelper;
 import com.example.listener.FriendRequestListener;
+import com.example.listener.InitListener;
 import com.jaeger.library.StatusBarUtil;
 
 import java.lang.reflect.Method;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new FriendRequestListener().start();            //启动朋友申请监听
+        new InitListener().InitListener();            //启动所有需要开启的监听
 
         StatusBarUtil.setColor(MainActivity.this, getResources().getColor(R.color.smallBlue));
         replaceFragment(new MessageFragment());

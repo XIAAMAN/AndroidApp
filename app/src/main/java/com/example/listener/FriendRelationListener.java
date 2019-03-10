@@ -10,7 +10,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
-import com.example.bean.RequestFriendInfo;
+import com.example.bean.Friends;
 import com.example.bean.User;
 import com.example.constant.Constant;
 import com.example.util.MyApplication;
@@ -23,17 +23,17 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
-public class FriendRequestListener {
+public class FriendRelationListener {
     //IP地址和端口号
-    public static String IP_ADDRESS = Constant.IP;
-    public static int PORT = 9999;
-    public String phone = null;
+    private static String IP_ADDRESS = Constant.IP;
+    private static int PORT = 8888;
+    private String phone = null;
     //handler
-    Handler handler = null;
-    Socket soc = null;
-    DataOutputStream dos = null;
-    DataInputStream dis = null;
-    String messageRecv = null;
+    private Handler handler = null;
+    private Socket soc = null;
+    private DataOutputStream dos = null;
+    private DataInputStream dis = null;
+    private String messageRecv = null;
     private LocalBroadcastManager localBroadcastManager;
 
     public void start() {
@@ -46,17 +46,16 @@ public class FriendRequestListener {
                 super.handleMessage(msg);
                 Bundle b = msg.getData();  //获取消息中的Bundle对象
                 String messageRecv = b.getString("data");  //获取键为data的字符串的值
+                Log.d("FriendRelation", messageRecv);
                 if(!"[]".equals(messageRecv)) {     //获得数据，将数据存入数据库，并更新notificationFragment页面
-                    Log.d("NotificationFragment",messageRecv);
                     saveInfo(messageRecv);
+                   // Log.d("FriendRelation", messageRecv);
                     //发送广播
                     localBroadcastManager = LocalBroadcastManager.getInstance(MyApplication.getContext());
-                    Intent intent = new Intent("com.example.androidapp.LOCAL_BROADCAST");
+                    Intent intent = new Intent("com.example.androidapp.Friend_Info_BROADCAST");
                     localBroadcastManager.sendBroadcast(intent);
 
                 }
-
-                Log.d("TCPSuccess",messageRecv);
             }
         };
     }
@@ -64,10 +63,10 @@ public class FriendRequestListener {
 
     //    新建一个子线程，实现socket通信
     class ConnectionThread extends Thread {
-        String message = null;
+        String phone = null;
 
-        public ConnectionThread(String msg) {
-            message = msg;
+        public ConnectionThread(String phone) {
+            this.phone = phone;
         }
 
         @Override
@@ -78,19 +77,19 @@ public class FriendRequestListener {
             messageRecv = null;
 
 //            if (soc == null) {
-                try {
-                    //Log.d("socket","new socket");
-                    soc = new Socket(IP_ADDRESS, PORT);
-                    //获取socket的输入输出流
-                    dis = new DataInputStream(soc.getInputStream());
-                    dos = new DataOutputStream(soc.getOutputStream());
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+            try {
+                //Log.d("socket","new socket");
+                soc = new Socket(IP_ADDRESS, PORT);
+                //获取socket的输入输出流
+                dis = new DataInputStream(soc.getInputStream());
+                dos = new DataOutputStream(soc.getOutputStream());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 //            }
             try {
-                dos.writeUTF(message);
+                dos.writeUTF(phone);
                 dos.flush();
                 messageRecv = dis.readUTF();//如果没有收到数据，会阻塞
                 Message msg = new Message();
@@ -111,7 +110,7 @@ public class FriendRequestListener {
             while (true) {
                 try {
                     new ConnectionThread(phone).start();
-                    Thread.sleep(5000);//每隔50000ms执行一次
+                    Thread.sleep(10000);//每隔10秒执行一次
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -131,11 +130,29 @@ public class FriendRequestListener {
     //将返回的信息存储到数据库
     public void saveInfo(String info) {
         LitePal.getDatabase();
+        //查询本地数据库，获得所有好友信息
+        List<Friends> localFriendsList = LitePal.findAll(Friends.class);
         //将json字符串转化为javabean对象数组
-        List<RequestFriendInfo> requestFriendInfoList =
-                JSON.parseObject(info, new TypeReference<List<RequestFriendInfo>>(){});
-        for(int i=0; i<requestFriendInfoList.size();i++) {
-            requestFriendInfoList.get(i).save();
+        List<Friends> externalFriendsList = JSON.parseObject(info, new TypeReference<List<Friends>>(){});
+        //通过比较，看是否有新的好友信息，如果有则添加到本地数据库
+        if (localFriendsList.size() == 0) {
+            for (int i=0; i<externalFriendsList.size(); i++) {
+                externalFriendsList.get(i).save();
+            }
+        } else {
+            for (int i=0; i<externalFriendsList.size(); i++) {
+                String phone = externalFriendsList.get(i).getPhone();
+                for (int j=0; j<localFriendsList.size(); j++) {
+                    //如果找到外部与本地数据一样，则结束循环，如果到循环结束都没找到，则进行添加
+                    if (phone.equals(localFriendsList.get(j).getPhone())) {
+                        break;
+                    }
+                    if ( j == (localFriendsList.size()-1)) {
+                        //说明本地未有该数据，添加到数据库中
+                        externalFriendsList.get(i).save();
+                    }
+                }
+            }
         }
     }
 

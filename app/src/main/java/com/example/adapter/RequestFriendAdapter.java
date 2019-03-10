@@ -1,26 +1,17 @@
 package com.example.adapter;
 
 import android.content.Context;
-import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.androidapp.R;
-import com.example.bean.RequestFriendInfo;
-import com.example.listView.Message;
 import com.example.listView.RequestFriend;
-import com.example.util.MyApplication;
-
-import org.litepal.LitePal;
 
 import java.util.List;
-
-import javax.security.auth.callback.Callback;
 
 public class RequestFriendAdapter extends ArrayAdapter<RequestFriend> implements View.OnClickListener {
     private int resourceId;     //item的ID
@@ -28,13 +19,16 @@ public class RequestFriendAdapter extends ArrayAdapter<RequestFriend> implements
     private List<RequestFriend> requestFriends;
     private LayoutInflater mInflater;
     private Callback mCallback;
-    Button button;
     public RequestFriendAdapter(Context context, int resourceId, List<RequestFriend> objects, Callback callback) {
         super(context, resourceId, objects);
         requestFriends = objects;
         mInflater = LayoutInflater.from(context);
         mCallback = callback;
         this.resourceId = resourceId;
+    }
+
+    public void deleteItem(int position) {
+        requestFriends.remove(position);
     }
 
     //自定义接口用于回调按钮点击事件到Activity
@@ -60,28 +54,12 @@ public class RequestFriendAdapter extends ArrayAdapter<RequestFriend> implements
 //        View view;
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.friend_request, null);
+            convertView = mInflater.inflate(R.layout.friend_request_item, null);
            // view = LayoutInflater.from(getContext()).inflate(resourceId, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.userImage = (ImageView) convertView.findViewById(R.id.request_user_image);
             viewHolder.userRealName = (TextView) convertView.findViewById(R.id.request_user_realName);
-            viewHolder.result = (Button) convertView.findViewById(R.id.request_friend_btn);
-//            button = (Button) view.findViewById(R.id.request_friend_btn);
-//            button.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    button.setText(R.string.acceptedRequest);
-//                    button.setTextColor(MyApplication.getContext().getResources().getColor(R.color.black));
-//                    button.setBackgroundColor(MyApplication.getContext().getResources().getColor(R.color.white));
-//                    button.setClickable(false);
-//                    LitePal.getDatabase();
-//                    String phone = requestFriend.getUserRealName();
-//                    RequestFriendInfo requestFriendInfo = new RequestFriendInfo();
-//                    requestFriendInfo.setIsSaw(1);
-//                    requestFriendInfo.updateAll("myPhone = ?", phone);
-//
-//                }
-//            });
+            viewHolder.result = (TextView) convertView.findViewById(R.id.request_friend_btn);
             convertView.setTag(viewHolder);    //将ViewHolder存储在View中
 
         } else {
@@ -95,14 +73,17 @@ public class RequestFriendAdapter extends ArrayAdapter<RequestFriend> implements
         viewHolder.userImage.setImageResource(requestFriend.getImageId());
         viewHolder.userRealName.setText(requestFriend.getUserRealName());
         viewHolder.result.setText(requestFriend.getResult());
+        //判断按钮状态，若为已同意则重新设置样式，并且不可点击
         if (getContext().getResources().getString(R.string.acceptedRequest).equals(requestFriend.getResult())) {
             viewHolder.result.setClickable(false);
             viewHolder.result.setTextColor(getContext().getResources().getColor(R.color.gray));
             viewHolder.result.setBackgroundColor(getContext().getResources().getColor(R.color.white));
+        } else {
+            viewHolder.result.setOnClickListener(this);
         }
-        viewHolder.result.setOnClickListener(this);
-        viewHolder.result.setTag(position);
 
+
+        viewHolder.result.setTag(position);
 
         return convertView;
     }
@@ -117,7 +98,7 @@ public class RequestFriendAdapter extends ArrayAdapter<RequestFriend> implements
     class ViewHolder {
         ImageView userImage;
         TextView userRealName;
-        Button result;
+        TextView result;
 
     }
 }

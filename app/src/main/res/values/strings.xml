@@ -55,5 +55,6 @@
     <string name="acceptRequest">同意</string>
     <string name="acceptedRequest">已同意</string>
     <string name="requestTypeIsFriend">请求加为好友</string>
+    <string name="delete">删除</string>
 
 </resources>

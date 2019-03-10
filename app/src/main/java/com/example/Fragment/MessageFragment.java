@@ -55,7 +55,7 @@ public class MessageFragment extends Fragment {
     //模拟从数据库中读取数据
     private void initMessage() {
         messageList = new ArrayList<>();
-        for (int i=0; i<5; i++) {
+        for (int i=0; i<20; i++) {
             Message message1 = new Message(R.drawable.user_image_big, "xiaaman",
                     "你好啊，你在干什么", "2", "14-02");
             messageList.add(message1);

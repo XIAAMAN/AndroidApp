@@ -10,7 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.example.androidapp.MainActivity;
 import com.example.androidapp.R;
 import com.example.bean.RequestFriendInfo;
@@ -123,42 +126,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         try{
             //创建数据库，如果数据库不存在，则进行创建，如果有更新或存在则进行更新，并且保留以前的数据
             LitePal.getDatabase();
+            //json字符串转javabean
+            User user = JSONObject.parseObject(jsonData, new TypeReference<User>(){});
 
-            JSONObject object = JSONObject.parseObject(jsonData);
-            String phone = object.getString("phone");
-            String name = object.getString("name");
-            int sex = object.getInteger("sex");
-            String email = object.getString("email");
-            String nickName = object.getString("nickName");
-            String image = object.getString("image");
-            String time = object.getString("time");
-
-            //现在数据库中进行查询，看是否已有该用户信息，如果没有则进行添加，如果有则不添加
+            //现在数据库中进行查询，看是否已有用户信息，如果没有则进行添加，如果有则判断是否同一个用户
+            //数据库中只存储一位用户信息，如果发现新用户登录则删除老用户信息保留新用户信息
             User selectUser = LitePal.findFirst(User.class);
             if (selectUser == null) {
-                User user = new User();
-                user.setName(name);
-                user.setNickName(nickName);
-                user.setPhone(phone);
-                user.setEmail(email);
-                user.setSex(sex);
-                user.setImage(image);
-                user.setTime(time);
                 user.save();        //向表中添加数据
             } else {
-                if( !(phone.equals(selectUser.getPhone())) ){
+                if( !(user.getPhone().equals(selectUser.getPhone())) ){
                     //新用户登录，删除老用户所有数据,再存储新用户数据
                     new DeleteAllData().deleteAll();
                     //储存新用户数据
-
-                    User user = new User();
-                    user.setName(name);
-                    user.setNickName(nickName);
-                    user.setPhone(phone);
-                    user.setEmail(email);
-                    user.setSex(sex);
-                    user.setImage(image);
-                    user.setTime(time);
                     user.save();        //向表中添加数据
                 }
             }
