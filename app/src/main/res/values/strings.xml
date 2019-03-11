@@ -46,9 +46,11 @@
     <string name="search_friend_phone">手机号：</string>
     <string name="search_friend_email">邮箱：</string>
     <string name="add_search_friend">添加好友</string>
+    <string name="is_friend">已是好友</string>
     <string name="male">男</string>
     <string name="female">女</string>
     <string name="searchFriendInputPhoneError">请输入正确的手机号码</string>
+    <string name="searchFriendInputUserPhone">皮一下很开心，不要输入自己的手机号哦</string>
     <string name="addFriendHint">已成功发送好友申请</string>
     <string name="addFriendFailedHint">请求失败</string>
 

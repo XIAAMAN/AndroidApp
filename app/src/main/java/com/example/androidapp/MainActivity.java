@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -24,7 +25,7 @@ import com.example.Fragment.MessageFragment;
 import com.example.Fragment.NotificationFragment;
 import com.example.activity.FindAndAddFriendActivity;
 import com.example.helper.BottomNavigationViewHelper;
-import com.example.listener.FriendRequestListener;
+import com.example.listener.EndListenerThread;
 import com.example.listener.InitListener;
 import com.jaeger.library.StatusBarUtil;
 
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d("MainActivityStart", "onCreate");
         new InitListener().InitListener();            //启动所有需要开启的监听
 
         StatusBarUtil.setColor(MainActivity.this, getResources().getColor(R.color.smallBlue));
@@ -159,5 +160,14 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.main_fragment, fragment);
         transaction.commit();
+    }
+
+    //当活动销毁时，关闭子线程
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //结束所有该结束的子线程
+        new EndListenerThread().endListenerThread();
     }
 }

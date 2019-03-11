@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSONObject;
 import com.example.androidapp.MainActivity;
 import com.example.androidapp.R;
+import com.example.bean.Friends;
 import com.example.bean.User;
 import com.example.constant.Constant;
 import com.example.login.LoginActivity;
@@ -32,6 +33,7 @@ import com.jaeger.library.StatusBarUtil;
 
 import org.litepal.LitePal;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class FindAndAddFriendActivity extends AppCompatActivity implements View.OnClickListener {
@@ -43,6 +45,7 @@ public class FindAndAddFriendActivity extends AppCompatActivity implements View.
     private TextView returnPhone;
     private TextView returnEmail;
     private LinearLayout linearLayout;
+    private Button addFriendBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +69,7 @@ public class FindAndAddFriendActivity extends AppCompatActivity implements View.
         returnPhone = (TextView) findViewById(R.id.searchFriendPhone);
         linearLayout = (LinearLayout) findViewById(R.id.searchResultLinearLayout);
         Button searchFriendBtn = (Button) findViewById(R.id.searchFriendBtn);
-        Button addFriendBtn = (Button) findViewById(R.id.addFriendBtn);
+        addFriendBtn = (Button) findViewById(R.id.addFriendBtn);
         searchFriendBtn.setOnClickListener(this);
         addFriendBtn.setOnClickListener(this);
         searchPhone.setOnClickListener(this);       //当点击输入手机号时，将搜索结果设为不可见
@@ -98,7 +101,9 @@ public class FindAndAddFriendActivity extends AppCompatActivity implements View.
                 //进行数据库操作，在后台数据库进行查询，返回User信息
                 String phone = searchPhone.getText().toString();
                 searchPhone.setText("");        //清空搜索栏
-                if (ValidateUtil.isMobileNO(phone)) {
+                if (getUserPhone().equals(phone)) {
+                    Toast.makeText(this, R.string.searchFriendInputUserPhone, Toast.LENGTH_SHORT).show();
+                }else if (ValidateUtil.isMobileNO(phone)) {
                     searchFriend(phone);
                 } else {
                     Toast.makeText(this, R.string.searchFriendInputPhoneError, Toast.LENGTH_SHORT).show();
@@ -160,6 +165,7 @@ public class FindAndAddFriendActivity extends AppCompatActivity implements View.
             //将LinearLayout设置为可见
             linearLayout.setVisibility(View.VISIBLE);
 
+            isFriend(returnPhone.getText().toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,7 +178,6 @@ public class FindAndAddFriendActivity extends AppCompatActivity implements View.
         User user = LitePal.findFirst(User.class);      //获得当前登录账户
         String friendPhone = returnPhone.getText().toString();      //申请添加好友的手机号
         String[] addFriendUrl = {Constant.URL_ADD_FRIEND, "myPhone", user.getPhone(), "friendPhone", friendPhone};
-
 
         //message为网络连接的结果，如果message为“”表示连接失败，否则表示连接成功为返回的json数据
         String message = "";
@@ -203,6 +208,9 @@ public class FindAndAddFriendActivity extends AppCompatActivity implements View.
             new AlertDialogUtil("", this.getString(R.string.addFriendFailedHint),
                     FindAndAddFriendActivity.this).alertDialogWithOk();
         }
+
+
+
     }
 
     //关闭输入法
@@ -212,6 +220,38 @@ public class FindAndAddFriendActivity extends AppCompatActivity implements View.
         if (inputMethodManager.isActive()) {
             inputMethodManager.hideSoftInputFromWindow(FindAndAddFriendActivity.this.getCurrentFocus().getWindowToken()
                     ,InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    //获得当前用户的手机号
+    public String getUserPhone () {
+        LitePal.getDatabase();
+        return LitePal.findFirst(User.class).getPhone();
+    }
+
+    //判断添加的人是否已经是好友
+    public void isFriend (String phone) {
+        LitePal.getDatabase();
+        //判断该手机号是否已经是好友，如果是好友则不可再次添加
+        //设置添加好友按钮的样式
+        List<Friends> friendsList = LitePal.findAll(Friends.class);
+        boolean isFriend = false;       //表示当前要添加的是否已经是好友
+        for (int i=0; i<friendsList.size(); i++) {
+            if (phone.equals(friendsList.get(i).getPhone())) {
+                isFriend = true;
+                break;
+            }
+        }
+        if (isFriend) {     //已经是好友，更改添加好友按钮的样式和文字
+            addFriendBtn.setText(R.string.is_friend);
+            addFriendBtn.setClickable(false);
+            addFriendBtn.setBackgroundColor(getResources().getColor(R.color.gray));
+            addFriendBtn.setTextColor(getResources().getColor(R.color.addGray));
+        } else {
+            addFriendBtn.setText(R.string.add_search_friend);
+            addFriendBtn.setClickable(true);
+            addFriendBtn.setBackgroundColor(getResources().getColor(R.color.smallBlue));
+            addFriendBtn.setTextColor(getResources().getColor(R.color.white));
         }
     }
 

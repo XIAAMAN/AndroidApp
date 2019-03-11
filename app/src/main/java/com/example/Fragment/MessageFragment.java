@@ -47,6 +47,7 @@ public class MessageFragment extends Fragment {
                 //跳转到聊天页面
                 Intent intent = new Intent(getActivity(), ChatPageActivity.class);
                 intent.putExtra("name", userName);
+                intent.putExtra("friendPhone", "15870811824");
                 startActivity(intent);
             }
         });

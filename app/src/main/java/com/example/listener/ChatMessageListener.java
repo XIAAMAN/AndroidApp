@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.example.bean.ChatMessage;
 import com.example.bean.Friends;
 import com.example.bean.User;
 import com.example.constant.Constant;
@@ -22,10 +23,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
-public class FriendRelationListener {
+public class ChatMessageListener {
     //IP地址和端口号
     private String IP_ADDRESS = Constant.IP;
-    private int PORT = 8888;
+    private int PORT = 6666;
     private static boolean status = true;  //用于判断线程是否继续，当退出活动时，结束子线程
     private String phone = null;
     //handler
@@ -37,7 +38,6 @@ public class FriendRelationListener {
     private LocalBroadcastManager localBroadcastManager;
 
     public void start() {
-        Log.d("FriendRelation", "start " + status);
         getUserPhone();     //获取用户手机号
         new MyThread().start();
         handler = new Handler() {
@@ -46,13 +46,13 @@ public class FriendRelationListener {
                 super.handleMessage(msg);
                 Bundle b = msg.getData();  //获取消息中的Bundle对象
                 String messageRecv = b.getString("data");  //获取键为data的字符串的值
-                Log.d("FriendRelation", messageRecv);
+                Log.d("ChatMessageListener", messageRecv);
                 if(!"[]".equals(messageRecv)) {     //获得数据，将数据存入数据库，并更新notificationFragment页面
                     saveInfo(messageRecv);
-                   // Log.d("FriendRelation", messageRecv);
+                    // Log.d("FriendRelation", messageRecv);
                     //发送广播
                     localBroadcastManager = LocalBroadcastManager.getInstance(MyApplication.getContext());
-                    Intent intent = new Intent("com.example.androidapp.Friend_Info_BROADCAST");
+                    Intent intent = new Intent("com.example.androidapp.Chat_Message_BROADCAST");
                     localBroadcastManager.sendBroadcast(intent);
 
                 }
@@ -110,7 +110,7 @@ public class FriendRelationListener {
             while (status) {
                 try {
                     new ConnectionThread(phone).start();
-                    Thread.sleep(10000);//每隔10秒执行一次
+                    Thread.sleep(1000);//每隔1秒执行一次
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -130,29 +130,10 @@ public class FriendRelationListener {
     //将返回的信息存储到数据库
     public void saveInfo(String info) {
         LitePal.getDatabase();
-        //查询本地数据库，获得所有好友信息
-        List<Friends> localFriendsList = LitePal.findAll(Friends.class);
-        //将json字符串转化为javabean对象数组
-        List<Friends> externalFriendsList = JSON.parseObject(info, new TypeReference<List<Friends>>(){});
-        //通过比较，看是否有新的好友信息，如果有则添加到本地数据库
-        if (localFriendsList.size() == 0) {
-            for (int i=0; i<externalFriendsList.size(); i++) {
-                externalFriendsList.get(i).save();
-            }
-        } else {
-            for (int i=0; i<externalFriendsList.size(); i++) {
-                String phone = externalFriendsList.get(i).getPhone();
-                for (int j=0; j<localFriendsList.size(); j++) {
-                    //如果找到外部与本地数据一样，则结束循环，如果到循环结束都没找到，则进行添加
-                    if (phone.equals(localFriendsList.get(j).getPhone())) {
-                        break;
-                    }
-                    if ( j == (localFriendsList.size()-1)) {
-                        //说明本地未有该数据，添加到数据库中
-                        externalFriendsList.get(i).save();
-                    }
-                }
-            }
+        //将json字符串转换为javabean数组
+        List<ChatMessage> chatMessageList = JSON.parseObject(info, new TypeReference<List<ChatMessage>>(){});
+        for (int i=0; i<chatMessageList.size(); i++) {
+            chatMessageList.get(i).save();
         }
     }
 

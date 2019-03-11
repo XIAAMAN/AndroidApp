@@ -25,19 +25,19 @@ import java.util.List;
 
 public class FriendRequestListener {
     //IP地址和端口号
-    public static String IP_ADDRESS = Constant.IP;
-    public static int PORT = 9999;
-    public String phone = null;
+    private static boolean status ;      //用于判断线程是否继续，当退出活动时，结束子线程
+    private String IP_ADDRESS = Constant.IP;
+    private int PORT = 9999;
+    private String phone = null;        //用户手机号
     //handler
-    Handler handler = null;
-    Socket soc = null;
-    DataOutputStream dos = null;
-    DataInputStream dis = null;
-    String messageRecv = null;
+    private Handler handler = null;
+    private Socket soc = null;
+    private DataOutputStream dos = null;
+    private DataInputStream dis = null;
+    private String messageRecv = null;      //接收web端返回的数据
     private LocalBroadcastManager localBroadcastManager;
 
     public void start() {
-
         getUserPhone();     //获取用户手机号
         new MyThread().start();
         handler = new Handler() {
@@ -46,8 +46,8 @@ public class FriendRequestListener {
                 super.handleMessage(msg);
                 Bundle b = msg.getData();  //获取消息中的Bundle对象
                 String messageRecv = b.getString("data");  //获取键为data的字符串的值
+                Log.d("NotificationFragment",messageRecv);
                 if(!"[]".equals(messageRecv)) {     //获得数据，将数据存入数据库，并更新notificationFragment页面
-                    Log.d("NotificationFragment",messageRecv);
                     saveInfo(messageRecv);
                     //发送广播
                     localBroadcastManager = LocalBroadcastManager.getInstance(MyApplication.getContext());
@@ -64,10 +64,10 @@ public class FriendRequestListener {
 
     //    新建一个子线程，实现socket通信
     class ConnectionThread extends Thread {
-        String message = null;
+        String phone = "";
 
-        public ConnectionThread(String msg) {
-            message = msg;
+        public ConnectionThread(String phone) {
+            this.phone = phone;
         }
 
         @Override
@@ -90,7 +90,7 @@ public class FriendRequestListener {
                 }
 //            }
             try {
-                dos.writeUTF(message);
+                dos.writeUTF(phone);
                 dos.flush();
                 messageRecv = dis.readUTF();//如果没有收到数据，会阻塞
                 Message msg = new Message();
@@ -108,10 +108,10 @@ public class FriendRequestListener {
 
     class MyThread extends Thread{
         public void run() {
-            while (true) {
+            while (status) {
                 try {
                     new ConnectionThread(phone).start();
-                    Thread.sleep(5000);//每隔50000ms执行一次
+                    Thread.sleep(10000);//每隔500000s执行一次
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -139,4 +139,8 @@ public class FriendRequestListener {
         }
     }
 
+    //设置线程状态的值
+    public void setStatus (boolean status) {
+        this.status = status;
+    }
 }

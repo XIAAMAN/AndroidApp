@@ -38,11 +38,11 @@ import java.util.concurrent.ExecutionException;
 
 public class NotificationFragment extends Fragment implements
          RequestFriendAdapter.Callback, SwipeMenuListView.OnMenuItemClickListener {
-    List<RequestFriend> friendList;
-    LocalBroadcastManager broadcastManager, sendFriendInfoBroadCast;
-    IntentFilter intentFilter;
-    RequestFriendAdapter adapter;
-    BroadcastReceiver mReceiver;
+    private List<RequestFriend> friendList;
+    private LocalBroadcastManager broadcastManager, sendFriendInfoBroadCast;
+    private IntentFilter intentFilter;
+    private RequestFriendAdapter adapter;
+    private BroadcastReceiver mReceiver;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.notification_fragment, container, false);

@@ -35,12 +35,12 @@
         </android.support.design.widget.AppBarLayout>
 
         <!--<fragment-->
-            <!--android:id="@+id/main_fragment"-->
-            <!--android:name="com.example.Fragment.MessageFragment"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-            <!--/>-->
+        <!--android:id="@+id/main_fragment"-->
+        <!--android:name="com.example.Fragment.MessageFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--/>-->
         <FrameLayout
             android:id="@+id/main_fragment"
             android:layout_width="match_parent"

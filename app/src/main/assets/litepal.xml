@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <litepal>
     <dbname value="xiaaman"></dbname>
-    <version value="3"></version>
+    <version value="4"></version>
     <list>
         <mapping class="com.example.bean.User"></mapping>           <!--将类映射到表中-->
         <mapping class="com.example.bean.RequestFriendInfo"></mapping>
         <mapping class="com.example.bean.Friends"></mapping>
+        <mapping class="com.example.bean.ChatMessage"></mapping>
     </list>
 </litepal>

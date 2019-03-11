@@ -8,12 +8,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.androidapp.R;
-import com.example.bean.Msg;
+import com.example.bean.ChatMessage;
+import com.example.bean.User;
+
+import org.litepal.LitePal;
 
 import java.util.List;
 
-public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
-    private List<Msg> mMsgList;
+public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> {
+    private List<ChatMessage> mMsgList;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout leftLayout;
@@ -31,7 +34,7 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
     }
 
     //将数据传送进来
-    public MsgAdapter(List<Msg> msgList) {
+    public ChatMessageAdapter(List<ChatMessage> msgList) {
         mMsgList = msgList;
     }
 
@@ -45,13 +48,14 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
     //用于对RecyclerView子项进行赋值
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Msg msg = mMsgList.get(position);
-        if (msg.getType() == Msg.TYPE_RECEIVED) {
+        ChatMessage msg = mMsgList.get(position);
+
+        if (!msg.getSendPhone().equals(getUserPhone())) {
             //如果是收到的消息，则显示左边的消息布局，将右边的消息布局隐藏
             holder.leftLayout.setVisibility(View.VISIBLE);
             holder.rightLayout.setVisibility(View.GONE);
             holder.leftMsg.setText(msg.getContent());
-        } else if(msg.getType() == Msg.TYPE_SEND){
+        } else{
             //如果是发送的消息，则显示右边的消息布局，将左边的消息布局隐藏
             holder.rightLayout.setVisibility(View.VISIBLE);
             holder.leftLayout.setVisibility(View.GONE);
@@ -65,6 +69,10 @@ public class MsgAdapter extends RecyclerView.Adapter<MsgAdapter.ViewHolder> {
         return mMsgList.size();
     }
 
-
+    //获得用户手机号
+    public String getUserPhone() {
+        LitePal.getDatabase();
+        return LitePal.findFirst(User.class).getPhone();
+    }
 
 }

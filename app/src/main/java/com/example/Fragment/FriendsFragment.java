@@ -70,10 +70,14 @@ public class FriendsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FriendInfo friendInfo = friendInfoList.get(position);
+                //userName是作为聊天页面的返回按钮文字
                 String userName = friendInfo.getRealName();
+                //获得好友手机号，为了知道聊天页面是跟谁在聊天
+                String friendPhone = friendInfo.getPhone();
                 //跳转到聊天页面
                 Intent intent = new Intent(getActivity(), ChatPageActivity.class);
                 intent.putExtra("name", userName);
+                intent.putExtra("friendPhone", friendPhone);
                 startActivity(intent);
             }
         });
